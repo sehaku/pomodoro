@@ -31,8 +31,8 @@ const TimeSetter: React.FC<Props> = (props) => {
       onChange={(event) => {
         const val = event.target.value;
         if (val) {
-          if (Number(val) <= 0) {
-            props.setTime(0);
+          if (Number(val) <= 1) {
+            props.setTime(1);
           } else {
             props.setTime(Number(val));
           }

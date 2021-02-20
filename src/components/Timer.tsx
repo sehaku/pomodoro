@@ -47,13 +47,12 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 const Timer: React.FC<Props> = (props) => {
-  const initTime = [0, 10];
   const musicLenLimit = 10;
   const [isPomodoro, setIsPomodoro] = useState<boolean>(true);
   const [isFirstPlay, setIsFirstPlay] = useState<boolean>(true);
   const [isPlay, setIsPlay] = useState<boolean>(false);
-  const [second, setSecond] = useState<number>(initTime[1]);
-  const [minute, setMinute] = useState<number>(initTime[0]);
+  const [second, setSecond] = useState<number>(0);
+  const [minute, setMinute] = useState<number>(props.pomodoroTime);
   const [initialSec, setInitialSec] = useState<number>(minute * 60 + second);
 
   const [musicStart, setMusicStart] = useState<boolean>(false);
@@ -188,7 +187,6 @@ const Timer: React.FC<Props> = (props) => {
           style={{
             color: "#eeeeee",
             fontSize: "20vmin",
-            display: isPlay ? "" : "none",
           }}
         />
       </Grid>
