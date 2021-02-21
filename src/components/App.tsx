@@ -48,9 +48,10 @@ const App: React.FC = () => {
   );
   const [usrMusic, setUsrMusic] = useState(new Audio(defaultMusicUrl));
   const [usrVolume, setUsrVolume] = useState<number>(100);
+  const [volBeforeMute, setVolBeforeMute] = useState<number>(100);
+  const [isMute, setIsMute] = useState(false);
 
   const classes = useStyles();
-  useEffect(() => {}, [pomodoroTime, breakTime]);
   return (
     <React.Fragment>
       <Container className="root">
@@ -115,7 +116,14 @@ const App: React.FC = () => {
                   }}
                 />
               </Grid>
-              <VolumeSlider volume={usrVolume} setUsrVolume={setUsrVolume} />
+              <VolumeSlider
+                volume={usrVolume}
+                setUsrVolume={setUsrVolume}
+                volBeforeMute={volBeforeMute}
+                setVolBeforeMute={setVolBeforeMute}
+                isMute={isMute}
+                setIsMute={setIsMute}
+              />
               <Grid container alignItems="center" justify="center">
                 <Button
                   variant="outlined"

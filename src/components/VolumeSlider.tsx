@@ -1,16 +1,24 @@
+import React, { useEffect } from "react";
 import { Button, Grid, Slider, Typography } from "@material-ui/core";
 import { VolumeOff, VolumeUp } from "@material-ui/icons";
-import React, { useState } from "react";
 type Props = {
   volume: number;
   setUsrVolume: (volume: number) => void;
+  volBeforeMute: number;
+  setVolBeforeMute: (volume: number) => void;
+  isMute: boolean;
+  setIsMute: (isMute: boolean) => void;
 };
+
 const VolumeSlider: React.FC<Props> = (props) => {
-  const [isMute, setIsMute] = useState(false);
-  const [volBeforeMute, setVolBeforeMute] = useState(props.volume);
-//   useEffect(() => {
-//     console.log(isMute);
-//   }, [isMute]);
+  useEffect(() => {
+    if (
+      (props.volume === 0 && !props.isMute) ||
+      (props.volume !== 0 && props.isMute)
+    )
+      props.setIsMute(!props.isMute);
+  }, [props.isMute, props.volume]);
+
   return (
     <React.Fragment>
       <Typography id="input-slider" gutterBottom>
@@ -19,20 +27,20 @@ const VolumeSlider: React.FC<Props> = (props) => {
       <Grid container spacing={2} alignItems="center">
         <Button
           onClick={(event) => {
-            setVolBeforeMute(props.volume);
+            props.setVolBeforeMute(props.volume);
             props.setUsrVolume(0);
-            setIsMute(!isMute);
+            props.setIsMute(!props.isMute);
           }}
-          style={{ display: isMute ? "none" : "" }}
+          style={{ display: props.isMute ? "none" : "" }}
         >
           <VolumeUp />
         </Button>
         <Button
           onClick={(event) => {
-            props.setUsrVolume(volBeforeMute);
-            setIsMute(!isMute);
+            props.setUsrVolume(props.volBeforeMute);
+            props.setIsMute(!props.isMute);
           }}
-          style={{ display: isMute ? "" : "none" }}
+          style={{ display: props.isMute ? "" : "none" }}
         >
           <VolumeOff />
         </Button>

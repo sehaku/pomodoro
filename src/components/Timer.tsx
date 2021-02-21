@@ -63,16 +63,14 @@ const Timer: React.FC<Props> = (props) => {
         isPomodoro ? props.pomodoroMusic : props.breakTimeMusic
       );
     }
+    if (!isPlay) {
+      let time = isPomodoro ? props.pomodoroTime : props.breakTime
+      setSecond(0);
+      setMinute(time);
+      setInitialSec(time * 60);
+    }
     props.usrMusic.volume = props.usrVolume / 100;
-    // console.log("timer:usrVolume", props.usrVolume);
-  }, [
-    props.usrVolume,
-    props.pomodoroMusic,
-    props.breakTimeMusic,
-    props,
-    isPomodoro,
-    musicStart,
-  ]);
+  }, [props.usrVolume, props.pomodoroMusic, props.breakTimeMusic, isPomodoro, musicStart]);
   useInterval(
     () => {
       props.usrMusic.pause();
@@ -99,7 +97,6 @@ const Timer: React.FC<Props> = (props) => {
           props.usrMusic.volume = props.usrVolume / 100;
           props.usrMusic.play();
           setIsPomodoro(!isPomodoro);
-          console.log(props.usrMusic);
           setSecond(0);
         } else {
           setMinute((prev) => prev - 1);
