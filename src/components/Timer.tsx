@@ -65,8 +65,8 @@ const Timer: React.FC<Props> = (props) => {
     }
     if (!isPlay) {
       let time = isPomodoro ? props.pomodoroTime : props.breakTime;
-      setSecond(10);
-      setMinute(0);
+      setSecond(0);
+      setMinute(time);
       setInitialSec(time * 60);
     }
     props.usrMusic.volume = props.usrVolume / 100;
