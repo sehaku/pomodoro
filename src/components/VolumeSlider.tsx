@@ -17,7 +17,7 @@ const VolumeSlider: React.FC<Props> = (props) => {
       (props.volume !== 0 && props.isMute)
     )
       props.setIsMute(!props.isMute);
-  }, [props.isMute, props.volume]);
+  }, [props, props.isMute, props.volume]);
 
   return (
     <React.Fragment>

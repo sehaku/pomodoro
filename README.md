@@ -1,4 +1,7 @@
-# Getting Started with Create React App
+# Pomodoro Timer
+このアプリは GitHub pages にデプロイしています  
+https://sehaku.github.io/pomodoro/
+## Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 

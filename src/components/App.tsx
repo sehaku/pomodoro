@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   Box,
   Button,
@@ -39,14 +39,15 @@ const App: React.FC = () => {
   // 設定画面で画面を暗くする
   const [fade, setFade] = useState<boolean>(false);
   // 音楽ファイルの設定
-  const defaultMusicUrl = "http://www.ne.jp/asahi/music/myuu/wave/hana.mp3";
+  const defaultMusicURL =
+    "./alarmBreak.mp3";
   const [pomodoroMusic, setPomodoroMusic] = useState(
-    new Audio(defaultMusicUrl)
+    new Audio(defaultMusicURL)
   );
   const [breakTimeMusic, setBreakTimeMusic] = useState(
-    new Audio(defaultMusicUrl)
+    new Audio(defaultMusicURL)
   );
-  const [usrMusic, setUsrMusic] = useState(new Audio(defaultMusicUrl));
+  const [usrMusic, setUsrMusic] = useState(new Audio(defaultMusicURL));
   const [usrVolume, setUsrVolume] = useState<number>(100);
   const [volBeforeMute, setVolBeforeMute] = useState<number>(100);
   const [isMute, setIsMute] = useState(false);
