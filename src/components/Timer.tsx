@@ -56,21 +56,22 @@ const Timer: React.FC<Props> = (props) => {
   const [initialSec, setInitialSec] = useState<number>(minute * 60 + second);
 
   const [musicStart, setMusicStart] = useState<boolean>(false);
-
+  useEffect(() => {
+    let time = isPomodoro ? props.pomodoroTime : props.breakTime;
+    setSecond(0);
+    setMinute(time);
+    setInitialSec(time * 60);
+  }, [isPomodoro]);
+  useEffect(() => {
+    props.usrMusic.volume = props.usrVolume / 100;
+  }, [props.usrMusic, props.usrVolume]);
   useEffect(() => {
     if (!musicStart) {
       props.onMusicChange(
         isPomodoro ? props.pomodoroMusic : props.breakTimeMusic
       );
     }
-    if (!isPlay) {
-      let time = isPomodoro ? props.pomodoroTime : props.breakTime;
-      setSecond(0);
-      setMinute(time);
-      setInitialSec(time * 60);
-    }
-    props.usrMusic.volume = props.usrVolume / 100;
-  }, [props.usrVolume, props.pomodoroMusic, props.breakTimeMusic, isPomodoro, musicStart, isPlay, props]);
+  }, [props.pomodoroMusic, props.breakTimeMusic, isPomodoro, musicStart]);
   useInterval(
     () => {
       props.usrMusic.pause();
