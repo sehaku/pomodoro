@@ -1,3 +1,4 @@
+// TODO Separate files (per Components)
 import React, { useEffect, useState } from "react";
 import {
   Restore,
@@ -17,6 +18,8 @@ import useInterval from "use-interval";
 type Props = {
   pomodoroTime: number;
   breakTime: number;
+  longBreakTime: number;
+  longBreakInterval: number;
   pomodoroMusic: HTMLAudioElement;
   breakTimeMusic: HTMLAudioElement;
   usrMusic: HTMLAudioElement;
@@ -51,17 +54,26 @@ const Timer: React.FC<Props> = (props) => {
   const [isPomodoro, setIsPomodoro] = useState<boolean>(true);
   const [isFirstPlay, setIsFirstPlay] = useState<boolean>(true);
   const [isPlay, setIsPlay] = useState<boolean>(false);
+  // const [second, setSecond] = useState<number>(0);
+  // const [minute, setMinute] = useState<number>(props.pomodoroTime);
   const [second, setSecond] = useState<number>(0);
   const [minute, setMinute] = useState<number>(props.pomodoroTime);
   const [initialSec, setInitialSec] = useState<number>(minute * 60 + second);
-
+  const [pomodoroCount, setPomodoroCount] = useState<number>(0);
   const [musicStart, setMusicStart] = useState<boolean>(false);
   useEffect(() => {
     let time = isPomodoro ? props.pomodoroTime : props.breakTime;
+    if (!isPomodoro && pomodoroCount % props.longBreakInterval === 0) {
+      time = props.longBreakTime
+    }
     setSecond(0);
     setMinute(time);
     setInitialSec(time * 60);
   }, [isPomodoro]);
+
+  useEffect(() => {
+    toggleBreakTime();
+  }, [pomodoroCount]);
   useEffect(() => {
     props.usrMusic.volume = props.usrVolume / 100;
   }, [props.usrMusic, props.usrVolume]);
@@ -83,13 +95,22 @@ const Timer: React.FC<Props> = (props) => {
     },
     musicStart ? musicLenLimit * 1000 : null
   );
+  const toggleBreakTime = () => {
+    console.log(pomodoroCount,props.longBreakInterval);
+    if (pomodoroCount !== 0 && pomodoroCount % props.longBreakInterval === 0) {
+      setMinute(props.longBreakTime);
+      setInitialSec(props.longBreakTime * 60);
+    } else {
+      setMinute(props.breakTime);
+      setInitialSec(props.breakTime * 60);
+    }
+  };
   useInterval(
     () => {
       if (second <= 0) {
         if (minute === 0) {
           if (isPomodoro) {
-            setMinute(props.breakTime);
-            setInitialSec(props.breakTime * 60);
+            setPomodoroCount((prev) => prev + 1);
           } else {
             setMinute(props.pomodoroTime);
             setInitialSec(props.pomodoroTime * 60);
@@ -116,6 +137,7 @@ const Timer: React.FC<Props> = (props) => {
     setSecond(0);
     setIsPomodoro(true);
     setInitialSec(props.pomodoroTime * 60);
+    setPomodoroCount(0);
   };
 
   const classes = useStyles();

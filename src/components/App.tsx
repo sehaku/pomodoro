@@ -36,11 +36,12 @@ const App: React.FC = () => {
   // 時間設定
   const [pomodoroTime, setPomodoroTime] = useState<number>(25);
   const [breakTime, setBreakTime] = useState<number>(5);
+  const [longBreakTime, setLongBreakTime] = useState<number>(25);
+  const [longBreakInterval, setLongBreakInterval] = useState<number>(4);
   // 設定画面で画面を暗くする
   const [fade, setFade] = useState<boolean>(false);
   // 音楽ファイルの設定
-  const defaultMusicURL =
-    "./alarmBreak.mp3";
+  const defaultMusicURL = "./alarmBreak.mp3";
   const [pomodoroMusic, setPomodoroMusic] = useState(
     new Audio(defaultMusicURL)
   );
@@ -77,8 +78,15 @@ const App: React.FC = () => {
             setFade(false);
             if (isNaN(pomodoroTime)) {
               setPomodoroTime(1);
-            } else if (isNaN(breakTime)) {
+            }
+            if (isNaN(breakTime)) {
               setBreakTime(1);
+            }
+            if (isNaN(longBreakTime)) {
+              setLongBreakTime(1);
+            }
+            if (isNaN(longBreakInterval)) {
+              setLongBreakInterval(1);
             }
           }}
         >
@@ -117,6 +125,20 @@ const App: React.FC = () => {
                   }}
                 />
               </Grid>
+              <Grid container alignItems="center" justify="flex-start">
+                <TimeSetter
+                  time={longBreakTime}
+                  setTime={setLongBreakTime}
+                  label="長めの休憩時間(min)"
+                />
+              </Grid>
+              <Grid container alignItems="center" justify="flex-start">
+                <TimeSetter
+                  time={longBreakInterval}
+                  setTime={setLongBreakInterval}
+                  label="長めの休憩頻度"
+                />
+              </Grid>
               <VolumeSlider
                 volume={usrVolume}
                 setUsrVolume={setUsrVolume}
@@ -133,8 +155,15 @@ const App: React.FC = () => {
                     close();
                     if (isNaN(pomodoroTime)) {
                       setPomodoroTime(1);
-                    } else if (isNaN(breakTime)) {
+                    }
+                    if (isNaN(breakTime)) {
                       setBreakTime(1);
+                    }
+                    if (isNaN(longBreakTime)) {
+                      setLongBreakTime(1);
+                    }
+                    if (isNaN(longBreakInterval)) {
+                      setLongBreakInterval(1);
                     }
                   }}
                 >
@@ -147,6 +176,8 @@ const App: React.FC = () => {
         <Timer
           pomodoroTime={pomodoroTime}
           breakTime={breakTime}
+          longBreakTime={longBreakTime}
+          longBreakInterval={longBreakInterval}
           usrMusic={usrMusic}
           pomodoroMusic={pomodoroMusic}
           breakTimeMusic={breakTimeMusic}
