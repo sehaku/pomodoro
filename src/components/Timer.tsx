@@ -54,10 +54,10 @@ const Timer: React.FC<Props> = (props) => {
   const [isPomodoro, setIsPomodoro] = useState<boolean>(true);
   const [isFirstPlay, setIsFirstPlay] = useState<boolean>(true);
   const [isPlay, setIsPlay] = useState<boolean>(false);
+  const [second, setSecond] = useState<number>(10);
+  const [minute, setMinute] = useState<number>(0);
   // const [second, setSecond] = useState<number>(0);
   // const [minute, setMinute] = useState<number>(props.pomodoroTime);
-  const [second, setSecond] = useState<number>(0);
-  const [minute, setMinute] = useState<number>(props.pomodoroTime);
   const [initialSec, setInitialSec] = useState<number>(minute * 60 + second);
   const [pomodoroCount, setPomodoroCount] = useState<number>(0);
   const [musicStart, setMusicStart] = useState<boolean>(false);
