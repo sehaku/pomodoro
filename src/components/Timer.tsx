@@ -64,7 +64,7 @@ const Timer: React.FC<Props> = (props) => {
   useEffect(() => {
     let time = isPomodoro ? props.pomodoroTime : props.breakTime;
     if (!isPomodoro && pomodoroCount % props.longBreakInterval === 0) {
-      time = props.longBreakTime
+      time = props.longBreakTime;
     }
     setSecond(0);
     setMinute(time);
@@ -96,7 +96,7 @@ const Timer: React.FC<Props> = (props) => {
     musicStart ? musicLenLimit * 1000 : null
   );
   const toggleBreakTime = () => {
-    console.log(pomodoroCount,props.longBreakInterval);
+    // console.log(pomodoroCount, props.longBreakInterval);
     if (pomodoroCount !== 0 && pomodoroCount % props.longBreakInterval === 0) {
       setMinute(props.longBreakTime);
       setInitialSec(props.longBreakTime * 60);
@@ -165,7 +165,7 @@ const Timer: React.FC<Props> = (props) => {
           <Box className={classes.in_circle}>
             <Typography component="div" color="textSecondary">
               <Typography style={{ fontSize: "5vmin", color: "#eeeeee" }}>
-                {isPomodoro ? "作業中" : "休憩中"}
+                {isPlay ? (isPomodoro ? "作業中" : "休憩中") : "停止中"}
               </Typography>
               <Grid container justify="center" className="timer">
                 <Typography style={{ fontSize: "5vmin", color: "#eeeeee" }}>
@@ -209,6 +209,11 @@ const Timer: React.FC<Props> = (props) => {
             fontSize: "20vmin",
           }}
         />
+      </Grid>
+      <Grid container alignItems="center" justify="center">
+        <Typography style={{ fontSize: "3vmin", color: "#eeeeee" }}>
+          Pomomodo Count : {pomodoroCount}
+        </Typography>
       </Grid>
     </React.Fragment>
   );
