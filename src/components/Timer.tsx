@@ -25,6 +25,8 @@ type Props = {
   usrMusic: HTMLAudioElement;
   usrVolume: number;
   onMusicChange: (music: HTMLAudioElement) => void;
+  pomodoroCount: number;
+  onPomodoroCountChange: (num: number) => void;
 };
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -54,26 +56,30 @@ const Timer: React.FC<Props> = (props) => {
   const [isPomodoro, setIsPomodoro] = useState<boolean>(true);
   const [isFirstPlay, setIsFirstPlay] = useState<boolean>(true);
   const [isPlay, setIsPlay] = useState<boolean>(false);
-  const [second, setSecond] = useState<number>(10);
-  const [minute, setMinute] = useState<number>(0);
-  // const [second, setSecond] = useState<number>(0);
-  // const [minute, setMinute] = useState<number>(props.pomodoroTime);
+  // const [second, setSecond] = useState<number>(10);
+  // const [minute, setMinute] = useState<number>(0);
+  const [second, setSecond] = useState<number>(0);
+  const [minute, setMinute] = useState<number>(props.pomodoroTime);
   const [initialSec, setInitialSec] = useState<number>(minute * 60 + second);
-  const [pomodoroCount, setPomodoroCount] = useState<number>(0);
   const [musicStart, setMusicStart] = useState<boolean>(false);
   useEffect(() => {
     let time = isPomodoro ? props.pomodoroTime : props.breakTime;
-    if (!isPomodoro && pomodoroCount % props.longBreakInterval === 0) {
+    if (!isPomodoro && props.pomodoroCount % props.longBreakInterval === 0) {
       time = props.longBreakTime;
     }
     setSecond(0);
     setMinute(time);
     setInitialSec(time * 60);
   }, [isPomodoro]);
-
+  useEffect(() => {
+    if (isFirstPlay) {
+      setMinute(props.pomodoroTime);
+      setInitialSec(props.pomodoroTime * 60);
+    }
+  }, [props.breakTime, props.longBreakTime, props.pomodoroTime]);
   useEffect(() => {
     toggleBreakTime();
-  }, [pomodoroCount]);
+  }, [props.pomodoroCount]);
   useEffect(() => {
     props.usrMusic.volume = props.usrVolume / 100;
   }, [props.usrMusic, props.usrVolume]);
@@ -96,11 +102,15 @@ const Timer: React.FC<Props> = (props) => {
     musicStart ? musicLenLimit * 1000 : null
   );
   const toggleBreakTime = () => {
-    // console.log(pomodoroCount, props.longBreakInterval);
-    if (pomodoroCount !== 0 && pomodoroCount % props.longBreakInterval === 0) {
+    // console.log(props.pomodoroCount, props.longBreakInterval);
+    console.log("toggle");
+    if (
+      props.pomodoroCount !== 0 &&
+      props.pomodoroCount % props.longBreakInterval === 0
+    ) {
       setMinute(props.longBreakTime);
       setInitialSec(props.longBreakTime * 60);
-    } else {
+    } else if (!isFirstPlay) {
       setMinute(props.breakTime);
       setInitialSec(props.breakTime * 60);
     }
@@ -110,7 +120,7 @@ const Timer: React.FC<Props> = (props) => {
       if (second <= 0) {
         if (minute === 0) {
           if (isPomodoro) {
-            setPomodoroCount((prev) => prev + 1);
+            props.onPomodoroCountChange(props.pomodoroCount);
           } else {
             setMinute(props.pomodoroTime);
             setInitialSec(props.pomodoroTime * 60);
@@ -137,7 +147,7 @@ const Timer: React.FC<Props> = (props) => {
     setSecond(0);
     setIsPomodoro(true);
     setInitialSec(props.pomodoroTime * 60);
-    setPomodoroCount(0);
+    // props.onPomodoroCountChange(0);
   };
 
   const classes = useStyles();
@@ -212,7 +222,7 @@ const Timer: React.FC<Props> = (props) => {
       </Grid>
       <Grid container alignItems="center" justify="center">
         <Typography style={{ fontSize: "3vmin", color: "#eeeeee" }}>
-          Pomomodo Count : {pomodoroCount}
+          Pomomodo Count : {props.pomodoroCount}
         </Typography>
       </Grid>
     </React.Fragment>

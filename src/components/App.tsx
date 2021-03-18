@@ -30,10 +30,15 @@ const useStyles = makeStyles((theme: Theme) =>
       opacity: 0.5,
       zIndex: 1,
     },
+    resetPomodoro: {
+      paddingTop: "10px"
+    }
   })
 );
 const App: React.FC = () => {
   // 時間設定
+  // const [pomodoroTime, setPomodoroTime] = useState<number>(0);
+  // const [breakTime, setBreakTime] = useState<number>(0);
   const [pomodoroTime, setPomodoroTime] = useState<number>(25);
   const [breakTime, setBreakTime] = useState<number>(5);
   const [longBreakTime, setLongBreakTime] = useState<number>(25);
@@ -52,6 +57,7 @@ const App: React.FC = () => {
   const [usrVolume, setUsrVolume] = useState<number>(100);
   const [volBeforeMute, setVolBeforeMute] = useState<number>(100);
   const [isMute, setIsMute] = useState(false);
+  const [pomodoroCount, setPomodoroCount] = useState<number>(0);
 
   const classes = useStyles();
   return (
@@ -170,6 +176,23 @@ const App: React.FC = () => {
                   OK
                 </Button>
               </Grid>
+              <Grid
+                container
+                alignItems="center"
+                justify="center"
+                className={classes.resetPomodoro}
+              >
+                <Button
+                  variant="outlined"
+                  onClick={() => {
+                    setFade(false);
+                    close();
+                    setPomodoroCount(0);
+                  }}
+                >
+                  Reset Pomodoro Count
+                </Button>
+              </Grid>
             </Grid>
           )}
         </Popup>
@@ -184,6 +207,10 @@ const App: React.FC = () => {
           usrVolume={usrVolume}
           onMusicChange={(music) => {
             setUsrMusic(music);
+          }}
+          pomodoroCount={pomodoroCount}
+          onPomodoroCountChange={(cnt) => {
+            setPomodoroCount(cnt + 1);
           }}
         />
       </Container>
