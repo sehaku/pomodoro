@@ -34,7 +34,7 @@ const TimeSetter: React.FC<Props> = (props) => {
           if (Number(val) <= 1) {
             props.setTime(1);
           } else {
-            props.setTime(Number(val));
+            props.setTime(Math.floor(Number(val)));
           }
         } else {
           props.setTime(Number(NaN));

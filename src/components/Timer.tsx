@@ -1,4 +1,3 @@
-// TODO Separate files (per Components)
 import React, { useEffect, useState } from "react";
 import {
   Restore,
@@ -7,7 +6,6 @@ import {
 } from "@material-ui/icons";
 import {
   Box,
-  CircularProgress,
   createStyles,
   Grid,
   makeStyles,
@@ -15,6 +13,8 @@ import {
   Typography,
 } from "@material-ui/core";
 import useInterval from "use-interval";
+import InCircleText from "./InCircleText";
+import Progress from "./Progress";
 type Props = {
   pomodoroTime: number;
   breakTime: number;
@@ -29,28 +29,7 @@ type Props = {
   onPomodoroCountChange: (num: number) => void;
 };
 
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    progressBottom: {
-      color: theme.palette.grey[200],
-    },
-    progressTop: {
-      color: "#aaaaaa",
-      position: "absolute",
-      left: 0,
-    },
-    in_circle: {
-      top: 0,
-      left: 0,
-      bottom: 0,
-      right: 0,
-      position: "absolute",
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "center",
-    },
-  })
-);
+
 const Timer: React.FC<Props> = (props) => {
   const musicLenLimit = 10;
   const [isPomodoro, setIsPomodoro] = useState<boolean>(true);
@@ -76,20 +55,20 @@ const Timer: React.FC<Props> = (props) => {
       setMinute(props.pomodoroTime);
       setInitialSec(props.pomodoroTime * 60);
     }
-  }, [props.breakTime, props.longBreakTime, props.pomodoroTime]);
+  }, [props.pomodoroTime]);
   useEffect(() => {
     toggleBreakTime();
   }, [props.pomodoroCount]);
   useEffect(() => {
     props.usrMusic.volume = props.usrVolume / 100;
   }, [props.usrMusic, props.usrVolume]);
-  useEffect(() => {
-    if (!musicStart) {
-      props.onMusicChange(
-        isPomodoro ? props.pomodoroMusic : props.breakTimeMusic
-      );
-    }
-  }, [props.pomodoroMusic, props.breakTimeMusic, isPomodoro, musicStart]);
+  // useEffect(() => {
+  //   if (!musicStart) {
+  //     props.onMusicChange(
+  //       isPomodoro ? props.pomodoroMusic : props.breakTimeMusic
+  //     );
+  //   }
+  // }, [props.pomodoroMusic, props.breakTimeMusic, isPomodoro, musicStart]);
   useInterval(
     () => {
       props.usrMusic.pause();
@@ -102,8 +81,6 @@ const Timer: React.FC<Props> = (props) => {
     musicStart ? musicLenLimit * 1000 : null
   );
   const toggleBreakTime = () => {
-    // console.log(props.pomodoroCount, props.longBreakInterval);
-    console.log("toggle");
     if (
       props.pomodoroCount !== 0 &&
       props.pomodoroCount % props.longBreakInterval === 0
@@ -126,7 +103,6 @@ const Timer: React.FC<Props> = (props) => {
             setInitialSec(props.pomodoroTime * 60);
           }
           setMusicStart(!musicStart);
-          props.usrMusic.volume = props.usrVolume / 100;
           props.usrMusic.play();
           setIsPomodoro(!isPomodoro);
           setSecond(0);
@@ -147,10 +123,8 @@ const Timer: React.FC<Props> = (props) => {
     setSecond(0);
     setIsPomodoro(true);
     setInitialSec(props.pomodoroTime * 60);
-    // props.onPomodoroCountChange(0);
   };
 
-  const classes = useStyles();
   return (
     <React.Fragment>
       <Grid
@@ -160,31 +134,13 @@ const Timer: React.FC<Props> = (props) => {
         style={{ marginBottom: "20px" }}
       >
         <Box position="relative" display="inline-flex">
-          <CircularProgress
-            size="50vmin"
-            variant="determinate"
-            value={100}
-            className={classes.progressBottom}
+          <Progress minute={minute} second={second} initialSec={initialSec} />
+          <InCircleText
+            isPlay={isPlay}
+            isPomodoro={isPomodoro}
+            minute={minute}
+            second={second}
           />
-          <CircularProgress
-            size="50vmin"
-            variant="determinate"
-            value={100 * (1 - (minute * 60 + second) / initialSec)}
-            className={classes.progressTop}
-          />
-          <Box className={classes.in_circle}>
-            <Typography component="div" color="textSecondary">
-              <Typography style={{ fontSize: "5vmin", color: "#eeeeee" }}>
-                {isPlay ? (isPomodoro ? "作業中" : "休憩中") : "停止中"}
-              </Typography>
-              <Grid container justify="center" className="timer">
-                <Typography style={{ fontSize: "5vmin", color: "#eeeeee" }}>
-                  {minute}:
-                  {Math.floor(second / 10) === 0 ? "0" + second : second}
-                </Typography>
-              </Grid>
-            </Typography>
-          </Box>
         </Box>
       </Grid>
       <Grid container alignItems="center" justify="center">
@@ -194,6 +150,7 @@ const Timer: React.FC<Props> = (props) => {
             if (isFirstPlay) {
               setInitialSec(minute * 60 + second);
             }
+            setIsFirstPlay(false);
           }}
           style={{
             color: "#eeeeee",
@@ -204,7 +161,6 @@ const Timer: React.FC<Props> = (props) => {
         <PauseCircleOutline
           onClick={() => {
             setIsPlay(false);
-            setIsFirstPlay(false);
           }}
           style={{
             color: "#eeeeee",
@@ -222,7 +178,7 @@ const Timer: React.FC<Props> = (props) => {
       </Grid>
       <Grid container alignItems="center" justify="center">
         <Typography style={{ fontSize: "3vmin", color: "#eeeeee" }}>
-          Pomomodo Count : {props.pomodoroCount}
+          Pomodoro Count : {props.pomodoroCount}
         </Typography>
       </Grid>
     </React.Fragment>
