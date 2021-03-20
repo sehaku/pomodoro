@@ -29,7 +29,6 @@ type Props = {
   onPomodoroCountChange: (num: number) => void;
 };
 
-
 const Timer: React.FC<Props> = (props) => {
   const musicLenLimit = 10;
   const [isPomodoro, setIsPomodoro] = useState<boolean>(true);
@@ -42,15 +41,6 @@ const Timer: React.FC<Props> = (props) => {
   const [initialSec, setInitialSec] = useState<number>(minute * 60 + second);
   const [musicStart, setMusicStart] = useState<boolean>(false);
   useEffect(() => {
-    let time = isPomodoro ? props.pomodoroTime : props.breakTime;
-    if (!isPomodoro && props.pomodoroCount % props.longBreakInterval === 0) {
-      time = props.longBreakTime;
-    }
-    setSecond(0);
-    setMinute(time);
-    setInitialSec(time * 60);
-  }, [isPomodoro]);
-  useEffect(() => {
     if (isFirstPlay) {
       setMinute(props.pomodoroTime);
       setInitialSec(props.pomodoroTime * 60);
@@ -62,13 +52,7 @@ const Timer: React.FC<Props> = (props) => {
   useEffect(() => {
     props.usrMusic.volume = props.usrVolume / 100;
   }, [props.usrMusic, props.usrVolume]);
-  // useEffect(() => {
-  //   if (!musicStart) {
-  //     props.onMusicChange(
-  //       isPomodoro ? props.pomodoroMusic : props.breakTimeMusic
-  //     );
-  //   }
-  // }, [props.pomodoroMusic, props.breakTimeMusic, isPomodoro, musicStart]);
+
   useInterval(
     () => {
       props.usrMusic.pause();
@@ -147,9 +131,6 @@ const Timer: React.FC<Props> = (props) => {
         <PlayCircleOutline
           onClick={() => {
             setIsPlay(true);
-            if (isFirstPlay) {
-              setInitialSec(minute * 60 + second);
-            }
             setIsFirstPlay(false);
           }}
           style={{
