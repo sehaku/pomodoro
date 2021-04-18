@@ -9,8 +9,10 @@ import {
   makeStyles,
   Theme,
 } from "@material-ui/core";
-import { Settings } from "@material-ui/icons";
+import { DoubleArrowTwoTone, Settings } from "@material-ui/icons";
 import Popup from "reactjs-popup";
+import { db } from "../db";
+import { useLiveQuery } from "dexie-react-hooks";
 import Timer from "./Timer";
 import UploadButton from "./UploadButton";
 import TimeSetter from "./TimeSetter";
@@ -31,8 +33,8 @@ const useStyles = makeStyles((theme: Theme) =>
       zIndex: 1,
     },
     resetPomodoro: {
-      paddingTop: "10px"
-    }
+      paddingTop: "10px",
+    },
   })
 );
 const App: React.FC = () => {
@@ -58,11 +60,43 @@ const App: React.FC = () => {
   const [volBeforeMute, setVolBeforeMute] = useState<number>(100);
   const [isMute, setIsMute] = useState(false);
   const [pomodoroCount, setPomodoroCount] = useState<number>(0);
-
   const classes = useStyles();
+  console.log(pomodoroMusic)
+  // const settings = useLiveQuery(() => db.settings.toArray(), []);
+  // console.log(settings);
+  const handleClick = () => {
+    console.log("click");
+    db.settings.add(
+      {
+        id: 1,
+        usrVolume: usrVolume,
+        pomodoroCount: pomodoroCount,
+        pomodoroTime: pomodoroTime,
+        breakTime: breakTime,
+        longBreakTime: longBreakTime,
+        longBreakInterval: longBreakInterval,
+        pomodoroSrc: pomodoroMusic.src,
+        breakTimeSrc: breakTimeMusic.src
+      })
+    // db.settings.update(1,{
+    //   id: 1,
+    //   usrVolume: usrVolume,
+    //   pomodoroCount: pomodoroCount,
+    //   pomodoroTime: pomodoroTime,
+    //   breakTime: breakTime,
+    //   longBreakTime: longBreakTime,
+    //   longBreakInterval: longBreakInterval,
+    //   pomodoroMusic: 100,
+    //   breakTimeMusic: 100,
+    // })
+  };
   return (
     <React.Fragment>
       <Container className="root">
+        <button onClick={
+          handleClick
+        }
+        >Click</button>
         <Popup
           trigger={
             <IconButton
