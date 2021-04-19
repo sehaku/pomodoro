@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Button,
@@ -9,12 +9,15 @@ import {
   makeStyles,
   Theme,
 } from "@material-ui/core";
-import { Settings } from "@material-ui/icons";
+import { DoubleArrowTwoTone, Settings } from "@material-ui/icons";
 import Popup from "reactjs-popup";
+import { db } from "../db";
+import { useLiveQuery } from "dexie-react-hooks";
 import Timer from "./Timer";
 import UploadButton from "./UploadButton";
 import TimeSetter from "./TimeSetter";
 import VolumeSlider from "./VolumeSlider";
+import { convertCompilerOptionsFromJson } from "typescript";
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     settingBtn: {
@@ -31,8 +34,8 @@ const useStyles = makeStyles((theme: Theme) =>
       zIndex: 1,
     },
     resetPomodoro: {
-      paddingTop: "10px"
-    }
+      paddingTop: "10px",
+    },
   })
 );
 const App: React.FC = () => {
@@ -58,11 +61,92 @@ const App: React.FC = () => {
   const [volBeforeMute, setVolBeforeMute] = useState<number>(100);
   const [isMute, setIsMute] = useState(false);
   const [pomodoroCount, setPomodoroCount] = useState<number>(0);
-
   const classes = useStyles();
+  console.log(pomodoroMusic)
+  console.log("Yay")
+  // const settings = useLiveQuery(() => db.settings.toArray(), []);
+  // console.log(settings);
+  const settingCount = useLiveQuery(()=>db.settings.count());
+  // console.log(settingCount);
+  // console.log(db.settings.where("id").equals(1).toArray());
+  const handleClick = () => {
+    console.log("click");
+    db.transaction("rw", db.settings, ()=>{
+    if (settingCount === 0) {
+      db.settings.add(
+        {
+          id: 1,
+          usrVolume: usrVolume,
+          pomodoroCount: pomodoroCount,
+          pomodoroTime: pomodoroTime,
+          breakTime: breakTime,
+          longBreakTime: longBreakTime,
+          longBreakInterval: longBreakInterval,
+          pomodoroSrc: pomodoroMusic.src,
+          breakTimeSrc: breakTimeMusic.src,
+        })
+    } else {
+      db.settings.update(1,{
+        id: 1,
+        usrVolume: usrVolume,
+        pomodoroCount: pomodoroCount,
+        pomodoroTime: pomodoroTime,
+        breakTime: breakTime,
+        longBreakTime: longBreakTime,
+        longBreakInterval: longBreakInterval,
+        pomodoroSrc: pomodoroMusic.src,
+        breakTimeSrc: breakTimeMusic.src,
+      })
+      // console.log("Success to update settings.")
+    }
+    }).then(() => {
+      console.log("Success to udpate settings.");
+    }).catch((error) => {
+      alert("Failed to update settings.");
+    })
+  };
+  useEffect(() => {
+    // console.log("effect");
+    if (settingCount === 0) {
+      // pass
+    } else {
+      db.transaction('r', db.settings, async () => {
+        const set = await db.settings.get({ id: 1 });
+        setUsrVolume(() => {
+          return set?.usrVolume || usrVolume
+        });
+        setPomodoroCount(() => {
+          return set?.pomodoroCount || pomodoroCount
+        });
+        setPomodoroTime(() => {
+          return set?.pomodoroTime || pomodoroTime
+        });
+        setBreakTime(() => {
+          return set?.breakTime || breakTime
+        });
+        setLongBreakTime(() => {
+          return set?.longBreakTime || longBreakTime
+        });
+        setLongBreakInterval(() => {
+          return set?.longBreakInterval || longBreakInterval
+        });
+        setPomodoroMusic(() => {
+          return new Audio(set?.pomodoroSrc) || pomodoroMusic
+        });
+        setBreakTimeMusic(() => {
+          return new Audio(set?.breakTimeSrc) || breakTimeMusic
+        });
+        // console.log("effectDone")
+      })
+    }
+  },[]); // componentDidMount
   return (
     <React.Fragment>
       <Container className="root">
+        <button onClick={
+          handleClick
+        }
+        >Click</button>
         <Popup
           trigger={
             <IconButton
@@ -81,7 +165,6 @@ const App: React.FC = () => {
             setFade(true);
           }}
           onClose={() => {
-            setFade(false);
             if (isNaN(pomodoroTime)) {
               setPomodoroTime(1);
             }
@@ -94,6 +177,7 @@ const App: React.FC = () => {
             if (isNaN(longBreakInterval)) {
               setLongBreakInterval(1);
             }
+            setFade(false);
           }}
         >
           {(close: () => void) => (
